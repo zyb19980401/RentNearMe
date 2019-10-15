@@ -8,65 +8,52 @@ headers = ({'User-Agent':
 condoforsale = "https://condos.ca/toronto/condos-for-sale"
 response = get(condoforsale, headers=headers)
 soup = BeautifulSoup(response.text, 'lxml')
+# print(soup)
 house_containers = soup.find_all('div', class_="FrmWb")
-print(house_containers[0])
-temp = house_containers[0]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# print(ccc)
-
-
-# images = []
-# for img in ccc.findAll('img'):
-#     print(img)
-
-# print(images)
-
 info_list = []
-# temp = house_containers[0]
-# print(house_containers[0])
-# print('https://condos.ca' + str(house_containers[0].a['href']))
-# print(temp)
+
+def getHouseInfo(houseTypeHtml):
+    # a function that takes a house html and return a list that contains[bedroom Info, bathroom Info,Parking \\
+    # Info, size Info]
+    htmlAfterSplit = houseTypeHtml.split("<")
+    resultInfo = []
+    for houseinfo in htmlAfterSplit:
+        if "BD" in houseinfo or "Studio" in houseinfo or "BA" in houseinfo or "Parking" in houseinfo or "sqft" in houseinfo:
+            try:
+                found = re.search('>.+', houseinfo).group(0)[1:]  # group 0 contains only matched string
+            except AttributeError:
+                found = ''
+            resultInfo.append(found)
+    return resultInfo
 
 
 
-# images = []
-# for img in soup.findAll('img'):
-#     images.append(img.get('src'))
+
 
 for unit in house_containers:
+    #find each unit from the house_containers, we will scrap information from each unit block
     link = 'https://condos.ca' + str(unit.a['href'])
     address = str(unit.a['alt'])
-    # print(unit)
+    price = unit.find('div', class_="_2PKdn")
+    houseType = str(unit.find('div', class_="_3FIJA"))
+    houseInfo = getHouseInfo(houseType)  # return a list in form of [bedroom Info, bathroom Info, size Info]
+    print(houseInfo)
+    bedRoomInfo = houseInfo[0]
+    bathRoomInfo = houseInfo[1]
+    parkingInfo = houseInfo[2]
+    sizeInfo = houseInfo[3]
 
+
+    # print()
+    # print(address)
+    # print(link)
+    # print(unit)
 a = house_containers
+
+
+
+
+
 # print(a)
 
 # print(soup)
@@ -77,51 +64,11 @@ a = house_containers
 # https://condos.ca/toronto/43-eglinton-avenue-east-condos-43-eglinton-ave-e/unit-308-C4599686
 
 
-tessst = "https://condos.ca/toronto/the-republic-south-tower-70-roehampton-ave/unit-221-C4600019"
-response = get(tessst, headers=headers)
-soupa = BeautifulSoup(response.text, 'lxml')
-#
-image_scr = [x['src'] for x in soupa.findAll('img')]
-css_link = [x['href'] for x in soupa.findAll('link')]
-scipt_src = []   ## Often times script doesn't have attributes 'src' hence need for try/except
-def find_list_resources (tag, attribute,soup):
-   list = []
-   for x in soup.findAll(tag):
-       try:
-           list.append(x[attribute])
-       except KeyError:
-           pass
-   return(list)
-
-
-bb = find_list_resources('img',"src",soupa)
-# print(bb)
-
-
-
-
-
-
-
-
-condoforsale =  "https://condos.ca/toronto/the-republic-south-tower-70-roehampton-ave/unit-221-C4600019"
-response = get(condoforsale, headers=headers)
-soup = BeautifulSoup(response.text, 'lxml')
-
-img_tags = soup.find_all('img')
-print(soup)
-urls = [img['src'] for img in img_tags]
-
-# print(urls)
-
-# for url in urls:
-#     filename = re.search(r'/([\w_-]+[.](jpg|gif|png))$', url)
-#     with open(filename.group(1), 'wb') as f:
-#         if 'http' not in url:
-#             # sometimes an image source can be relative
-#             # if it is provide the base url which also happens
-#             # to be the site variable atm.
-#             url = '{}{}'.format(site, url)
-#         response = requests.get(url)
-#         f.write(response.content)
-
+# tessst = "https://condos.ca/toronto/the-republic-south-tower-70-roehampton-ave/unit-221-C4600019"
+# response = get(tessst, headers=headers)
+# soupa = BeautifulSoup(response.text, 'lxml')
+# #
+# image_scr = [x['src'] for x in soupa.findAll('img')]
+# css_link = [x['href'] for x in soupa.findAll('link')]
+# print(image_scr)
+# print(css_link)
