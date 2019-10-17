@@ -8,10 +8,50 @@ headers = ({'User-Agent':
 condoforsale = "https://condos.ca/toronto/condos-for-sale"
 response = get(condoforsale, headers=headers)
 soup = BeautifulSoup(response.text, 'lxml')
-# print(soup)
+
+
+
+
+#try to find all the url and store them in to a list
+next_pages = soup.find('ul', class_="_3h0Z4")
+next_page_links = next_pages.findAll('a', class_="_3uJE2")
+allUrlInThePage = [link['href'] for link in next_page_links]
+print(allUrlInThePage)
+# for link in next_page_links:
+#     a = link['href']
+#     print(a)
+    # address = str(unit.a['alt'])
+    # temp = link.a['href']
+    # print(temp)
+
+
+
+
+# print (next_page.a["href"])
+# print(next_page_link)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 house_containers = soup.find_all('div', class_="FrmWb")
 info_list = []
-
 def getHouseInfo(houseTypeHtml):
     # a function that takes a house html and return a list that contains[bedroom Info, bathroom Info,Parking \\
     # Info, size Info]
@@ -32,16 +72,18 @@ def getHouseInfo(houseTypeHtml):
 
 for unit in house_containers:
     #find each unit from the house_containers, we will scrap information from each unit block
+    # print(unit)
     link = 'https://condos.ca' + str(unit.a['href'])
     address = str(unit.a['alt'])
     price = unit.find('div', class_="_2PKdn")
     houseType = str(unit.find('div', class_="_3FIJA"))
     houseInfo = getHouseInfo(houseType)  # return a list in form of [bedroom Info, bathroom Info, size Info]
-    print(houseInfo)
+    # print(houseInfo)
     bedRoomInfo = houseInfo[0]
     bathRoomInfo = houseInfo[1]
     parkingInfo = houseInfo[2]
     sizeInfo = houseInfo[3]
+
 
 
     # print()
