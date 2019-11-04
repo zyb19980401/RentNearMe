@@ -3,6 +3,8 @@ from requests import get
 import re
 import csv
 import pandas as pd
+import sys
+htmlInput = sys.argv[1]
 
 csv_file = open('condoData.csv', 'w')
 csv_writer = csv.writer(csv_file)
@@ -92,25 +94,28 @@ def loadData(IsRent):
 
 if __name__ == "__main__":
     # execute only if run as a script
+    print(htmlInput)
+    # print(sys.argv[2])
+    print("this is input from python script file")
     print("Hello World")
-    Option = input("Do u want to rent or buy?: ")
-    if Option == "buy":
-        print("Plz hold while we forming the csv file for ur data")
-        loadData(False)
-    else:
-        print("Plz hold while we forming the csv file for ur data")
-        loadData(True)
-    rawdata = pd.read_csv("./condoData.csv")
-    UpperLimit = int(input("What is ur upper Limit on Price?: "))
-    LowerLimit = int(input("What is ur lower Limit on Price?: "))
+    # Option = input("Do u want to rent or buy?: ")
+    # if Option == "buy":
+    #     print("Plz hold while we forming the csv file for ur data")
+    #     loadData(False)
+    # else:
+    #     print("Plz hold while we forming the csv file for ur data")
+    #     loadData(True)
+    # rawdata = pd.read_csv("./condoData.csv")
+    # UpperLimit = int(input("What is ur upper Limit on Price?: "))
+    # LowerLimit = int(input("What is ur lower Limit on Price?: "))
 
-    csv_file = open('condoDataPrice.csv', 'w')
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['price', 'address', 'bedRoomInfo', 'bathRoomInfo', 'parkingInfo', 'sizeInfo', 'link', 'fee'])
+    # csv_file = open('condoDataPrice.csv', 'w')
+    # csv_writer = csv.writer(csv_file)
+    # csv_writer.writerow(['price', 'address', 'bedRoomInfo', 'bathRoomInfo', 'parkingInfo', 'sizeInfo', 'link', 'fee'])
 
-    for i in range(rawdata.shape[0]):
-        temp = rawdata.iloc[i]
-        price = temp["price"]
-        if LowerLimit <= int(price) <= UpperLimit:
-            acc = rawdata.iloc[i].values.tolist()
-            csv_writer.writerow(acc)
+    # for i in range(rawdata.shape[0]):
+    #     temp = rawdata.iloc[i]
+    #     price = temp["price"]
+    #     if LowerLimit <= int(price) <= UpperLimit:
+    #         acc = rawdata.iloc[i].values.tolist()
+    #         csv_writer.writerow(acc)
