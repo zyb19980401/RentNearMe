@@ -3,6 +3,12 @@ from requests import get
 import re
 import csv
 import pandas as pd
+import flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite://', echo=False)
+
 
 csv_file = open('condoData.csv', 'w')
 csv_writer = csv.writer(csv_file)
@@ -17,6 +23,16 @@ def getHouseInfo(houseTypeHtml):
         if "BD" in houseinfo or "Studio" in houseinfo or "BA" in houseinfo or "Parking" in houseinfo or "sqft" in houseinfo:
             try:
                 found = re.search('>.+', houseinfo).group(0)[1:]  # group 0 contains only matched string
+                print(found)
+                if found == "1 BD" or found == "1 BA" or found == "1 Parking":
+                    found = 1
+                elif found == "1+1 BD":
+                    found = 1.5
+                elif found == "2 BD" or found == "2 BA" or found == "2 Parking":
+                    found = 2
+                elif found == "0 Parking":
+                    found = 0
+                print(found)
             except AttributeError:
                 found = ''
             resultInfo.append(found)
@@ -60,7 +76,8 @@ def loadData(IsRent):
         nextPage = condoForRent
     else:
         nextPage = condoForSale
-    while nextPage is not None:
+    # while nextPage is not None:
+    for i in range(4):
         response = get(nextPage, headers=headers)
         soup = BeautifulSoup(response.text, 'lxml')
         # print(getCondo(soup))
@@ -93,24 +110,37 @@ def loadData(IsRent):
 if __name__ == "__main__":
     # execute only if run as a script
     print("Hello World")
-    Option = input("Do u want to rent or buy?: ")
-    if Option == "buy":
-        print("Plz hold while we forming the csv file for ur data")
-        loadData(False)
-    else:
-        print("Plz hold while we forming the csv file for ur data")
-        loadData(True)
+    htmlInput = [0, 3000,1000,22323,1,1,1]
+    RentOrBuyChoice = htmlInput[0]
+    LimitUpper = htmlInput[1]
+    LimitLower = htmlInput[2]
+    address = htmlInput[3]
+    bedRoomNum = htmlInput[4]
+    washRommNum = htmlInput[5]
+    ParkingInfo = htmlInput[6]
+    loadData(True)
     rawdata = pd.read_csv("./condoData.csv")
-    UpperLimit = int(input("What is ur upper Limit on Price?: "))
-    LowerLimit = int(input("What is ur lower Limit on Price?: "))
-
-    csv_file = open('condoDataPrice.csv', 'w')
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['price', 'address', 'bedRoomInfo', 'bathRoomInfo', 'parkingInfo', 'sizeInfo', 'link', 'fee'])
-
-    for i in range(rawdata.shape[0]):
-        temp = rawdata.iloc[i]
-        price = temp["price"]
-        if LowerLimit <= int(price) <= UpperLimit:
-            acc = rawdata.iloc[i].values.tolist()
-            csv_writer.writerow(acc)
+    rawdata.to_sql("RawData", con=engine, if_exists='append', index=False)
+    cc = engine.execute("SELECT * FROM RawData WHERE 1000<= price <=3000 AND bedRoomInfo = %s AND bathRoomInfo = %s AND parkingInfo = %s" % (bedRoomNum,washRommNum, ParkingInfo)).fetchall()
+    print(cc)
+    # Option = input("Do u want to rent or buy?: ")
+    # if Option == "buy":
+    #     print("Plz hold while we forming the csv file for ur data")
+    #     loadData(False)
+    # else:
+    #     print("Plz hold while we forming the csv file for ur data")
+    #     loadData(True)
+    # rawdata = pd.read_csv("./condoData.csv")
+    # UpperLimit = int(input("What is ur upper Limit on Price?: "))
+    # LowerLimit = int(input("What is ur lower Limit on Price?: "))
+    #
+    # csv_file = open('condoDataPrice.csv', 'w')
+    # csv_writer = csv.writer(csv_file)
+    # csv_writer.writerow(['price', 'address', 'bedRoomInfo', 'bathRoomInfo', 'parkingInfo', 'sizeInfo', 'link', 'fee'])
+    #
+    # for i in range(rawdata.shape[0]):
+    #     temp = rawdata.iloc[i]
+    #     price = temp["price"]
+    #     if LowerLimit <= int(price) <= UpperLimit:
+    #         acc = rawdata.iloc[i].values.tolist()
+    #         csv_writer.writerow(acc)
