@@ -24,6 +24,16 @@ def getHouseInfo(houseTypeHtml):
         if "BD" in houseinfo or "Studio" in houseinfo or "BA" in houseinfo or "Parking" in houseinfo or "sqft" in houseinfo:
             try:
                 found = re.search('>.+', houseinfo).group(0)[1:]  # group 0 contains only matched string
+                print(found)
+                if found == "1 BD" or found == "1 BA" or found == "1 Parking":
+                    found = 1
+                elif found == "1+1 BD":
+                    found = 1.5
+                elif found == "2 BD" or found == "2 BA" or found == "2 Parking":
+                    found = 2
+                elif found == "0 Parking":
+                    found = 0
+                print(found)
             except AttributeError:
                 found = ''
             resultInfo.append(found)
@@ -99,17 +109,21 @@ def loadData(IsRent):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    RentOrBuyChoice = htmlInput[0]
-    LimitUpper = htmlInput[1]
-    LimitLower = htmlInput[2]
-    address = htmlInput[3]
-    bedRoomNum = htmlInput[4]
-    washRommNum = htmlInput[5]
-    ParkingInfo = htmlInput[6]
+    print(htmlInput)
+    splitedInput = htmlInput.split(",")
+    print(splitedInput)
+    RentOrBuyChoice = splitedInput[0]
+    LimitUpper = splitedInput[1]
+    LimitLower = splitedInput[2]
+    address = splitedInput[3]
+    bedRoomNum = splitedInput[4]
+    washRommNum = splitedInput[5]
+    ParkingInfo = splitedInput[6]
+
     loadData(True)
     rawdata = pd.read_csv("./condoData.csv")
     rawdata.to_sql("RawData", con=engine, if_exists='append', index=False)
-    cc = engine.execute("SELECT * FROM RawData WHERE price = 2000").fetchall()
+    cc = engine.execute("SELECT * FROM RawData WHERE 1000<= price <=3000 AND bedRoomInfo = %s AND bathRoomInfo = %s AND parkingInfo = %s" % (bedRoomNum,washRommNum,ParkingInfo)).fetchall()
     print(cc)
     
 
