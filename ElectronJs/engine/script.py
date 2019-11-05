@@ -4,6 +4,11 @@ import re
 import csv
 import pandas as pd
 import sys
+import sqlite3
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+engine = create_engine('sqlite://', echo=False)
 htmlInput = sys.argv[1]
 
 csv_file = open('condoData.csv', 'w')
@@ -62,7 +67,9 @@ def loadData(IsRent):
         nextPage = condoForRent
     else:
         nextPage = condoForSale
-    while nextPage is not None:
+    # while nextPage is not None:
+    for i in range(3):
+        print("wttttfff")
         response = get(nextPage, headers=headers)
         soup = BeautifulSoup(response.text, 'lxml')
         # print(getCondo(soup))
@@ -83,9 +90,7 @@ def loadData(IsRent):
                     urlWithoutHttp = allLiInNextPages[i + 1].find('a', class_="_3uJE2")['href']
                     new_url = "https://condos.ca" + urlWithoutHttp
                     nextPage = new_url
-
-                    print(new_url)
-
+                    # print(new_url)
                     break
             except AttributeError:
                 print("an exception ")
@@ -94,10 +99,20 @@ def loadData(IsRent):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    print(htmlInput)
-    # print(sys.argv[2])
-    print("this is input from python script file")
-    print("Hello World")
+    RentOrBuyChoice = htmlInput[0]
+    LimitUpper = htmlInput[1]
+    LimitLower = htmlInput[2]
+    address = htmlInput[3]
+    bedRoomNum = htmlInput[4]
+    washRommNum = htmlInput[5]
+    ParkingInfo = htmlInput[6]
+    loadData(True)
+    rawdata = pd.read_csv("./condoData.csv")
+    rawdata.to_sql("RawData", con=engine, if_exists='append', index=False)
+    cc = engine.execute("SELECT * FROM RawData WHERE price = 2000").fetchall()
+    print(cc)
+    
+
     # Option = input("Do u want to rent or buy?: ")
     # if Option == "buy":
     #     print("Plz hold while we forming the csv file for ur data")
