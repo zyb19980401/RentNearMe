@@ -47,9 +47,9 @@ def getCondo(souptoscrap):
         link = 'https://condos.ca' + str(unit.a['href'])
         address = str(unit.a['alt'])
         price = unit.find('div', class_="_2PKdn").text[1:]
-        price = price.replace(",", "")
+        price = str(price.replace(",", ""))
         if unit.find('div', class_= "YjyI8").text:
-            fee = unit.find('div', class_= "YjyI8").text
+            fee = str(unit.find('div', class_= "YjyI8").text)
         else:
             fee = "0"
         houseType = str(unit.find('div', class_="_3FIJA"))
@@ -57,11 +57,11 @@ def getCondo(souptoscrap):
         if len(houseInfo) == 4:
             bedRoomInfo = houseInfo[0]
             bathRoomInfo = houseInfo[1]
-            parkingInfo = houseInfo[2]
+            parkingInfo = str(houseInfo[2])
             sizeInfo = houseInfo[3]
         else:
             continue
-        result = [price, address, bedRoomInfo, bathRoomInfo, parkingInfo, sizeInfo, link, fee]
+        result = [str(price), address, bedRoomInfo, bathRoomInfo, str(parkingInfo), sizeInfo, link, str(fee)]
         allHouseInThePage.append(result)
     return allHouseInThePage
 
@@ -76,8 +76,7 @@ def loadData(IsRent):
     else:
         nextPage = condoForSale
     # while nextPage is not None:
-    for i in range(3):
-        print("wttttfff")
+    for i in range(10):
         response = get(nextPage, headers=headers)
         soup = BeautifulSoup(response.text, 'lxml')
         # print(getCondo(soup))
@@ -107,9 +106,9 @@ def loadData(IsRent):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    print(htmlInput)
+    # print(htmlInput)
     splitedInput = htmlInput.split(",")
-    print(splitedInput)
+    # print(splitedInput)
     RentOrBuyChoice = splitedInput[0]
     LimitUpper = splitedInput[1]
     LimitLower = splitedInput[2]
@@ -117,13 +116,17 @@ if __name__ == "__main__":
     bedRoomNum = splitedInput[4]
     washRommNum = splitedInput[5]
     ParkingInfo = splitedInput[6]
-
     loadData(True)
+    # if RentOrBuyChoice == 1:
+    #     loadData(True)
+    # else:
+    #     loadData(False)
     rawdata = pd.read_csv("./condoData.csv")
     rawdata.to_sql("RawData", con=engine, if_exists='append', index=False)
     result = engine.execute("SELECT * FROM RawData WHERE 1000<= price <=3000 AND bedRoomInfo = %s AND bathRoomInfo = %s AND parkingInfo = %s" % (bedRoomNum,washRommNum,ParkingInfo)).fetchall()
+
     for item in result:
-        print(str(item))
+        print(item)
     
 
     # Option = input("Do u want to rent or buy?: ")
