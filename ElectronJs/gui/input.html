@@ -6,11 +6,11 @@
         crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-    <script src="linkers/HousingLinker.js"></script>    
+    <script src="linkers/HousingLinker.js"></script>
 </head>
 
 <body>
-    <div class="jumbotron jumbotron-fluid">
+    <div class="jumbotron jumbotron-fluid" id="nextTobody">
         <div class="container">
             <h1 class="display-4">Choose your dream house</h1>
             <p class="lead">please tell us what do you want</p>
@@ -51,13 +51,13 @@
         </div>
     </div>
     <p class="text-monospace">Is there a place that you want to live near with? if yes put it here</p>
-<div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <span class="input-group-text">Address: </span>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Address: </span>
+        </div>
+        <input type="text" id="addressInput" class="form-control" aria-label="Address Near by">
     </div>
-    <input type="text" id="addressInput" class="form-control" aria-label="Address Near by">
-</div>
-<br>    
+    <br>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
             <label class="input-group-text" for="bedroomInput">How many bedrooms do you want?</label>
@@ -97,8 +97,10 @@
     </div>
     <br>
     <button type="button" style="background-color:gray; position:relative; left:50%" class="btn btn-secondary btn-lg"><a
-        style="color:white" onclick= "getData()">Submit</a></button>
-</div>
+            style="color:white" onclick="getData()">Submit</a></button>
+    <!-- <button type="button" style="background-color:gray; position:relative; left:50%" class="btn btn-secondary btn-lg"><a
+        style="color:white" onclick= "window.location.href = './result.html';">Submit</a></button>     -->
+    </div>
 
     <body>
 

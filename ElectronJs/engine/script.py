@@ -24,7 +24,6 @@ def getHouseInfo(houseTypeHtml):
         if "BD" in houseinfo or "Studio" in houseinfo or "BA" in houseinfo or "Parking" in houseinfo or "sqft" in houseinfo:
             try:
                 found = re.search('>.+', houseinfo).group(0)[1:]  # group 0 contains only matched string
-                print(found)
                 if found == "1 BD" or found == "1 BA" or found == "1 Parking":
                     found = 1
                 elif found == "1+1 BD":
@@ -33,7 +32,6 @@ def getHouseInfo(houseTypeHtml):
                     found = 2
                 elif found == "0 Parking":
                     found = 0
-                print(found)
             except AttributeError:
                 found = ''
             resultInfo.append(found)
@@ -123,8 +121,9 @@ if __name__ == "__main__":
     loadData(True)
     rawdata = pd.read_csv("./condoData.csv")
     rawdata.to_sql("RawData", con=engine, if_exists='append', index=False)
-    cc = engine.execute("SELECT * FROM RawData WHERE 1000<= price <=3000 AND bedRoomInfo = %s AND bathRoomInfo = %s AND parkingInfo = %s" % (bedRoomNum,washRommNum,ParkingInfo)).fetchall()
-    print(cc)
+    result = engine.execute("SELECT * FROM RawData WHERE 1000<= price <=3000 AND bedRoomInfo = %s AND bathRoomInfo = %s AND parkingInfo = %s" % (bedRoomNum,washRommNum,ParkingInfo)).fetchall()
+    for item in result:
+        print(str(item))
     
 
     # Option = input("Do u want to rent or buy?: ")
